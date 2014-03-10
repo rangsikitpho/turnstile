@@ -23,9 +23,9 @@ further details.
 
 
 To configure:
-Turnstile.setup do |config|
-  config.namespace = 'Project Name'
-  aws_access_key_id = 'AWS access key for dynamo'
-  aws_secret_access_key = 'AWS secret access key for dynamo'
-end
+  Turnstile.setup do |config|
+    config.namespace = 'Project Name'
+    aws_access_key_id = 'AWS access key for dynamo'
+    aws_secret_access_key = 'AWS secret access key for dynamo'
+  end
 
