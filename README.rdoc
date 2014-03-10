@@ -22,10 +22,22 @@ further details.
 
 
 
-To configure:
+Configuration
   Turnstile.setup do |config|
     config.namespace = 'Project Name'
     aws_access_key_id = 'AWS access key for dynamo'
     aws_secret_access_key = 'AWS secret access key for dynamo'
   end
+
+Basic Usage
+  class MyClass
+    include Turnstile
+    def my_method
+      ...
+    end
+
+    add_turnstile :my_method, :my_new_method, :max_processes => 1, :max_execution_time => 5.minutes
+  end
+
+  MyClass.new.my_new_method
 
