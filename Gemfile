@@ -12,3 +12,8 @@ group :development do
   gem "jeweler", "~> 2.0.1"
   gem "simplecov", ">= 0"
 end
+
+gem 'dotenv', :groups => [:development, :test]
+
+gem 'aws-sdk'
+gem 'activesupport' # TODO: Remove dependency, it's only used for configuration helper

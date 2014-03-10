@@ -1,6 +1,9 @@
-= turnstile
+= Turnstile
 
-Description goes here.
+Turnstile is a program for helping to manage concurrent processes and execution times.
+It was built to wrangle CRON jobs that were running with little oversite, allowing you to specify
+a certain max number of concurrent processes and max execution time, and then raise an error
+if those are violated. 
 
 == Contributing to turnstile
  
@@ -16,4 +19,13 @@ Description goes here.
 
 Copyright (c) 2014 Joshua Rangsikitpho. See LICENSE.txt for
 further details.
+
+
+
+To configure:
+Turnstile.setup do |config|
+  config.namespace = 'Project Name'
+  aws_access_key_id = 'AWS access key for dynamo'
+  aws_secret_access_key = 'AWS secret access key for dynamo'
+end
 
