@@ -6,13 +6,13 @@
 
 Gem::Specification.new do |s|
   s.name = "turnstile"
-  s.version = "0.9.0"
+  s.version = ""
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib"]
   s.authors = ["Joshua Rangsikitpho"]
   s.date = "2014-03-13"
-  s.description = "Process sequencer"
+  s.description = "TODO: longer description of your gem"
   s.email = "rangsikitpho@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
     "spec/spec_helper.rb",
     "spec/turnstile/db_spec.rb",
     "spec/turnstile_spec.rb",
+    "turnstile.gemspec",
     "turnstile/.document",
     "turnstile/.gitignore",
     "turnstile/.rspec",
