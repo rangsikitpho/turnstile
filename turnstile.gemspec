@@ -46,7 +46,7 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/rangsikitpho/turnstile"
   s.licenses = ["MIT"]
   s.rubygems_version = "2.2.1"
-  s.summary = "TODO: one-line summary of your gem"
+  s.summary = "Process sequencer"
 
   if s.respond_to? :specification_version then
     s.specification_version = 4
