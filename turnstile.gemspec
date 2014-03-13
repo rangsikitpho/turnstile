@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.authors = ["Joshua Rangsikitpho"]
   s.date = "2014-03-13"
-  s.description = "TODO: longer description of your gem"
+  s.description = "Process sequencer"
   s.email = "rangsikitpho@gmail.com"
   s.extra_rdoc_files = [
     "LICENSE.txt",
