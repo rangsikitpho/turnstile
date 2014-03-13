@@ -75,5 +75,28 @@ describe "Turnstile" do
     expect { t.my_new_method }.to raise_error(Turnstile::TurnstileException)
 
   end
+
+  it "it doesn't fail on next run after a max_execution_time exception" do
+    class Temp
+      include Turnstile
+      def my_method
+        sleep(5)
+      end
+      add_turnstile :my_method, :my_new_method, :max_execution_time => 1 #second
+    end
+
+    t = Temp.new
+    #t.my_new_method
+    expect { t.my_new_method }.to raise_error(Turnstile::TurnstileException)
+
+    class Temp
+      def my_method
+        # No sleep
+      end
+    end
+
+    t = Temp.new
+    t.my_new_method
+  end
 end
 

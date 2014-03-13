@@ -29,15 +29,18 @@ module Turnstile
 
         Turnstile.run_all_tests(db,options)
 
-        process_timestamp = db.add_active_process
+        begin
+          process_timestamp = db.add_active_process
 
-        #puts "running statsd time for #{db.key}"
-        #$statsd.time(db.key) do
-        send original_method_name, *args
-        #end
+          #puts "running statsd time for #{db.key}"
+          #$statsd.time(db.key) do
+          send original_method_name, *args
+          #end
 
-        Turnstile.max_execution_time_test(db,options[:max_execution_time]) # Run test again at end to make sure process finishing in time
-        db.delete_active_process(process_timestamp)
+          Turnstile.max_execution_time_test(db,options[:max_execution_time]) # Run test again at end to make sure process finishing in time
+        ensure
+          db.delete_active_process(process_timestamp) if process_timestamp
+        end
       end
     end
   end
