@@ -4,6 +4,7 @@ describe "Turnstile::Db" do
   before(:each) do
     Turnstile.setup do |config|
       config.namespace = 'My Project'
+      config.table_name = 'qa_turnstile'
       config.aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
       config.aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
     end

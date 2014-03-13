@@ -31,6 +31,8 @@ module Turnstile
 
     def oldest_process_execution_time
       active_processes = item.attributes.values_at(:active_processes).first
+      return nil unless active_processes
+
       now = Time.now
       active_processes.map do |active_process|
         started_at = Time.parse(active_process.split('|').first)
@@ -51,7 +53,7 @@ module Turnstile
     end
 
     def self.key(clazz,method_name,type)
-      "#{Turnstile.config.namespace}/#{clazz}/#{method_name}/#{type}"
+      "#{Turnstile.config.namespace}.#{clazz}.#{method_name}.#{type}"
     end
 
     def self.process_timestamp
@@ -59,7 +61,7 @@ module Turnstile
     end
 
     def self.table
-      @@table ||= dynamo_db.tables['qa_switchboard'].tap do |table|
+      @@table ||= dynamo_db.tables[Turnstile.config.table_name].tap do |table|
         table.hash_key = [:key, :string]
       end
     end

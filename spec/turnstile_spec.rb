@@ -3,9 +3,12 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "Turnstile" do
   before(:each) do
     Turnstile.setup do |config|
-      config.namespace = 'My Project'
+      config.namespace = 'MyProject'
+      config.table_name = 'qa_turnstile'
       config.aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
       config.aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      config.statsd_host = '10.206.34.16'
+      config.statsd_port = 8125
     end
 
     Turnstile::Db.clear_all_active_processes
@@ -56,6 +59,21 @@ describe "Turnstile" do
     threads << Thread.new { t.my_new_method }
 
     expect { threads.each { |thr| thr.join } }.to raise_error(Turnstile::TurnstileException)
+  end
+
+  it "raises a TurnstileException when max_execution_time is exceeded" do
+    class Temp
+      include Turnstile
+      def my_method
+        sleep(5)
+      end
+      add_turnstile :my_method, :my_new_method, :max_execution_time => 1 #second
+    end
+
+    t = Temp.new
+    #t.my_new_method
+    expect { t.my_new_method }.to raise_error(Turnstile::TurnstileException)
+
   end
 end
 

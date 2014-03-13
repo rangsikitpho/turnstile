@@ -4,6 +4,7 @@ require 'turnstile/db'
 require 'turnstile/turnstile_exception'
 require 'active_support/configurable'
 require 'aws-sdk'
+#require 'statsd-ruby'
 module Turnstile
   include ActiveSupport::Configurable
 
@@ -30,7 +31,10 @@ module Turnstile
 
         process_timestamp = db.add_active_process
 
+        #puts "running statsd time for #{db.key}"
+        #$statsd.time(db.key) do
         send original_method_name, *args
+        #end
 
         Turnstile.max_execution_time_test(db,options[:max_execution_time]) # Run test again at end to make sure process finishing in time
         db.delete_active_process(process_timestamp)
@@ -56,7 +60,7 @@ module Turnstile
     def max_execution_time_test(db,max_execution_time)
       if max_execution_time
         oldest_process_execution_time = db.oldest_process_execution_time
-        if oldest_process_execution_time >= max_execution_time
+        if oldest_process_execution_time && oldest_process_execution_time >= max_execution_time
           raise TurnstileException, "Failed max_execution_time check: #{oldest_process_execution_time} execution time out of max of #{max_execution_time}"
         end
       end
@@ -64,6 +68,7 @@ module Turnstile
 
     def setup
       yield config
+      #$statsd = Statsd.new config.statsd_host, config.statsd_port
     end
   end
 end
