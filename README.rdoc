@@ -28,10 +28,10 @@ Configuration
   Turnstile.setup do |config|
     config.namespace = 'Project Name'
     config.table_name = 'Dynamo DB Table Name'
-    aws_access_key_id = 'AWS access key for dynamo'
-    aws_secret_access_key = 'AWS secret access key for dynamo'
-    statsd_host = 'StatsD host'
-    statsd_port = 'StatsD port'
+    config.aws_access_key_id = 'AWS access key for dynamo'
+    config.aws_secret_access_key = 'AWS secret access key for dynamo'
+    config.statsd_host = 'StatsD host'
+    config.statsd_port = 'StatsD port'
   end
 
 Basic Usage
