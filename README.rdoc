@@ -41,7 +41,7 @@ Basic Usage
       ...
     end
 
-    add_turnstile :my_method, :my_new_method, :max_processes => 1, :max_execution_time => 5.minutes
+    add_turnstile :my_method, :my_new_method, max_processes: 1, max_execution_time: 5.minutes
   end
 
   MyClass.new.my_new_method

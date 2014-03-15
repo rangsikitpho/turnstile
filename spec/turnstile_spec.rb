@@ -20,7 +20,7 @@ describe "Turnstile" do
       def self.my_method(arg)
         arg += 1
       end
-      add_turnstile 'self.my_method', 'self.my_new_method', :max_processes => 1
+      add_turnstile 'self.my_method', 'self.my_new_method', max_processes: 1
     end
 
     arg = 5
@@ -34,7 +34,7 @@ describe "Turnstile" do
       def my_method(arg)
         arg += 1
       end
-      add_turnstile :my_method, :my_new_method, :max_processes => 1
+      add_turnstile :my_method, :my_new_method, max_processes: 1
     end
 
     t = Temp.new
@@ -50,7 +50,7 @@ describe "Turnstile" do
       def my_method
         sleep(5)
       end
-      add_turnstile :my_method, :my_new_method, :max_processes => 1
+      add_turnstile :my_method, :my_new_method, max_processes: 1
     end
 
     t = Temp.new
@@ -67,7 +67,7 @@ describe "Turnstile" do
       def my_method
         sleep(5)
       end
-      add_turnstile :my_method, :my_new_method, :max_execution_time => 1 #second
+      add_turnstile :my_method, :my_new_method, max_execution_time: 1 #second
     end
 
     t = Temp.new
@@ -82,7 +82,7 @@ describe "Turnstile" do
       def my_method
         sleep(5)
       end
-      add_turnstile :my_method, :my_new_method, :max_execution_time => 1 #second
+      add_turnstile :my_method, :my_new_method, max_execution_time: 1 #second
     end
 
     t = Temp.new
