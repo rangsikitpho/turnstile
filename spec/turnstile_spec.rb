@@ -4,7 +4,7 @@ describe "Turnstile" do
   before(:each) do
     Turnstile.setup do |config|
       config.namespace = 'MyProject'
-      config.table_name = 'qa_turnstile'
+      config.table_name = 'test_turnstile'
       config.aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
       config.aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
       config.statsd_host = '10.206.34.16'
@@ -65,7 +65,7 @@ describe "Turnstile" do
     class Temp
       include Turnstile
       def my_method
-        sleep(5)
+        sleep(2)
       end
       add_turnstile :my_method, :my_new_method, max_execution_time: 1 #second
     end
@@ -80,9 +80,9 @@ describe "Turnstile" do
     class Temp
       include Turnstile
       def my_method
-        sleep(5)
+        sleep(3)
       end
-      add_turnstile :my_method, :my_new_method, max_execution_time: 1 #second
+      add_turnstile :my_method, :my_new_method, max_execution_time: 2 #second
     end
 
     t = Temp.new
@@ -97,6 +97,33 @@ describe "Turnstile" do
 
     t = Temp.new
     t.my_new_method
+  end
+
+  it "properly gets the class name for instance methods" do
+    class Temp
+      include Turnstile
+      def my_method
+      end
+      add_turnstile :my_method, :my_new_method, max_execution_time: 10 #second
+    end
+
+    t = Temp.new
+    db = Turnstile::Db.new('Temp','my_method','instance') # Doing it this way since and_call_original doesn't work in this version of rspec
+    Turnstile::Db.should_receive(:new).with('Temp',:my_method,'instance').and_return(db)
+    t.my_new_method
+  end
+
+  it "properly gets the class name for class methods" do
+    class Temp
+      include Turnstile
+      def self.my_method
+      end
+      add_turnstile 'self.my_method', 'self.my_new_method', max_execution_time: 1 #second
+    end
+
+    db = Turnstile::Db.new('Temp','my_method','class') # Doing it this way since and_call_original doesn't work in this version of rspec
+    Turnstile::Db.should_receive(:new).with('Temp','my_method','class').and_return(db)
+    Temp.my_new_method
   end
 end
 

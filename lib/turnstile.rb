@@ -15,6 +15,7 @@ module Turnstile
   module ClassMethods
     # TODO: Add block support
     def add_turnstile(original_method_name,new_method_name,options={})
+      clazz = self.name
       (definer, type) =
         if original_method_name =~ /self\.*/
           original_method_name.sub!('self.','')
@@ -25,7 +26,7 @@ module Turnstile
         end
 
       send definer, new_method_name do |*args|
-        db = Turnstile::Db.new(self.class.name,original_method_name,type)
+        db = Turnstile::Db.new(clazz,original_method_name,type)
 
         Turnstile.run_all_tests(db,options)
 
