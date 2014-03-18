@@ -38,7 +38,7 @@ module Turnstile
           send original_method_name, *args
           #end
 
-          Turnstile.max_execution_time_test(db,options[:max_execution_time]) # Run test again at end to make sure process finishing in time
+          Turnstile.max_execution_time_test(db,options) # Run test again at end to make sure process finishing in time
         ensure
           db.delete_active_process(process_timestamp) if process_timestamp
         end
@@ -48,24 +48,30 @@ module Turnstile
 
   class << self
     def run_all_tests(db,options)
-      max_processes_test(db,options[:max_processes])
-      max_execution_time_test(db,options[:max_execution_time])
+      max_processes_test(db,options)
+      max_execution_time_test(db,options)
     end
 
-    def max_processes_test(db,max_processes)
-      if max_processes
+    def max_processes_test(db,options)
+      if options[:max_processes]
         active_process_count = db.active_process_count
-        if active_process_count >= max_processes
-          raise TurnstileException, "#{db.stilename} failed max_process check: #{active_process_count} active out of max of #{max_processes}"
+        if active_process_count >= options[:max_processes]
+          unless options[:squelch]
+            raise TurnstileException,
+              "#{db.stilename} failed max_process check: #{active_process_count} active out of max of #{options[:max_processes]}"
+          end
         end
       end
     end
 
-    def max_execution_time_test(db,max_execution_time)
-      if max_execution_time
+    def max_execution_time_test(db,options)
+      if options[:max_execution_time]
         oldest_process_execution_time = db.oldest_process_execution_time
-        if oldest_process_execution_time && oldest_process_execution_time >= max_execution_time
-          raise TurnstileException, "#{db.stilename} failed max_execution_time check: #{oldest_process_execution_time} execution time out of max of #{max_execution_time}"
+        if oldest_process_execution_time && oldest_process_execution_time >= options[:max_execution_time]
+          unless options[:squelch]
+            raise TurnstileException,
+              "#{db.stilename} failed max_execution_time check: #{oldest_process_execution_time} execution time out of max of #{options[:max_execution_time]}"
+          end
         end
       end
     end

@@ -125,5 +125,17 @@ describe "Turnstile" do
     Turnstile::Db.should_receive(:new).with('Temp','my_method','class').and_return(db)
     Temp.my_new_method
   end
+
+  it "squelches properly" do
+    class Temp
+      include Turnstile
+      def self.my_method
+        sleep 3
+      end
+      add_turnstile 'self.my_method', 'self.my_new_method', max_execution_time: 1, squelch: true
+    end
+
+    Temp.my_new_method
+  end
 end
 
