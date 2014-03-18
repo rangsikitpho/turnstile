@@ -47,6 +47,12 @@ module Turnstile
       end
     end
 
+    # For error reporting usage
+    def stilename
+      separator = type == 'class' ? '::' : '#'
+      "#{clazz}#{separator}#{method_name}"
+    end
+
     private
     def item
       Db.table.items[Db.key(clazz,method_name,type)]

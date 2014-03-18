@@ -56,7 +56,7 @@ module Turnstile
       if max_processes
         active_process_count = db.active_process_count
         if active_process_count >= max_processes
-          raise TurnstileException, "Failed max_process check: #{active_process_count} active out of max of #{max_processes}"
+          raise TurnstileException, "#{db.stilename} failed max_process check: #{active_process_count} active out of max of #{max_processes}"
         end
       end
     end
@@ -65,7 +65,7 @@ module Turnstile
       if max_execution_time
         oldest_process_execution_time = db.oldest_process_execution_time
         if oldest_process_execution_time && oldest_process_execution_time >= max_execution_time
-          raise TurnstileException, "Failed max_execution_time check: #{oldest_process_execution_time} execution time out of max of #{max_execution_time}"
+          raise TurnstileException, "#{db.stilename} failed max_execution_time check: #{oldest_process_execution_time} execution time out of max of #{max_execution_time}"
         end
       end
     end
