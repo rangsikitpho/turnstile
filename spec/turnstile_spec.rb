@@ -131,11 +131,12 @@ describe "Turnstile" do
       include Turnstile
       def self.my_method
         sleep 3
+        return true
       end
       add_turnstile 'self.my_method', 'self.my_new_method', max_execution_time: 1, squelch: true
     end
 
-    Temp.my_new_method
+    Temp.my_new_method.should be_nil
   end
 end
 
