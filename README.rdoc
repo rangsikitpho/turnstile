@@ -22,7 +22,9 @@ further details.
 
 
 DynamoDb Setup
-  Create a new table in DynamoDb with a Primary Key Type of Hash and a String Hash Attribute Name of "key"
+  Create a new table in DynamoDb with a Primary Key Type of "Hash and Range"
+  Hash attribute name should be "project" and of type "String"
+  Range attribute name should be "process" and of type "String"
 
 Configuration
   Turnstile.setup do |config|
