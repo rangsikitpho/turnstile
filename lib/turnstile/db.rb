@@ -6,31 +6,29 @@ module Turnstile
       self.clazz = clazz
       self.method_name = method_name
       self.type = type
-      self.key = Db.key(clazz,method_name,type)
-
     end
 
     def clear_active_processes
-      item.attributes.delete(:active_processes)
+      item.attributes.delete(:active)
     end
 
     def add_active_process
       Db.process_timestamp.tap do |process_timestamp|
-        item.attributes.add(:active_processes => [process_timestamp])
+        item.attributes.add(:active => [process_timestamp])
       end
     end
 
     def delete_active_process(process_timestamp)
-      item.attributes.delete(:active_processes => [process_timestamp])
+      item.attributes.delete(:active => [process_timestamp])
     end
 
     def active_process_count
-      active_processes = item.attributes.values_at(:active_processes).first
+      active_processes = item.attributes.values_at(:active).first
       active_processes ? active_processes.count : 0
     end
 
     def oldest_process_execution_time
-      active_processes = item.attributes.values_at(:active_processes).first
+      active_processes = item.attributes.values_at(:active).first
       return nil unless active_processes
 
       now = Time.now
@@ -40,8 +38,20 @@ module Turnstile
       end.max
     end
 
+    # Clear active processes for this project
     def self.clear_all_active_processes
-      # Is this the easiest way to delete all items?
+      clear_all_active_processes_for_project(Turnstile.config.project)
+    end
+
+    def self.clear_all_active_processes_for_project(project)
+      table.items.query(hash_value: project).select do |item|
+        item.attributes.delete(:active)
+      end
+    end
+
+    # Clear the entire turnstile deleting all dynamo records. 
+    # This will delete all projects using the current turnstile db
+    def self.clear_all
       table.items.select do |data|
         data.item.delete
       end
@@ -55,11 +65,11 @@ module Turnstile
 
     private
     def item
-      Db.table.items[Db.key(clazz,method_name,type)]
+      Db.table.items[Turnstile.config.project,Db.process_key(clazz,method_name,type)]
     end
 
-    def self.key(clazz,method_name,type)
-      "#{Turnstile.config.namespace}.#{clazz}.#{method_name}.#{type}"
+    def self.process_key(clazz,method_name,type)
+      "#{clazz}.#{method_name}.#{type}"
     end
 
     def self.process_timestamp
@@ -68,7 +78,8 @@ module Turnstile
 
     def self.table
       @@table ||= dynamo_db.tables[Turnstile.config.table_name].tap do |table|
-        table.hash_key = [:key, :string]
+        table.hash_key = [:project, :string]
+        table.range_key = [:process, :string]
       end
     end
 

@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe "Turnstile" do
   before(:each) do
     Turnstile.setup do |config|
-      config.namespace = 'MyProject'
+      config.project = 'MyProject'
       config.table_name = 'test_turnstile'
       config.aws_access_key_id = ENV['AWS_ACCESS_KEY_ID']
       config.aws_secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']

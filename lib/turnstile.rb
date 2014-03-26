@@ -33,8 +33,6 @@ module Turnstile
 
           process_timestamp = db.add_active_process
 
-          #puts "running statsd time for #{db.key}"
-          #$statsd.time(db.key) do
           send original_method_name, *args
           #end
 
