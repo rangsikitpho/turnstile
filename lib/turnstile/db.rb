@@ -18,6 +18,10 @@ module Turnstile
       end
     end
 
+    def delete_all_active_processes
+      item.attributes.delete(:active)
+    end
+
     def delete_active_process(process_timestamp)
       item.attributes.delete(:active => [process_timestamp])
     end
@@ -36,6 +40,10 @@ module Turnstile
         started_at = Time.parse(active_process.split('|').first)
         now - started_at
       end.max
+    end
+
+    def self.all_active_processes_for_project(project)
+      table.items.query(hash_value: project)
     end
 
     # Clear active processes for this project
