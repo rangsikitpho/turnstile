@@ -65,6 +65,21 @@ module Turnstile
       end
     end
 
+    # Clear old processes for this project
+    def self.clear_old
+      clear_old_for_project(Turnstile.config.project)
+    end
+
+    def self.clear_old_for_project(project)
+      table.items.query(hash_value: project).select do |item|
+        item.attributes.values_at("active")[0].each do |process_timestamp|
+          if process_timestamp and (Time.now - extract_time(process_timestamp)) > Turnstile.config.ttl
+            item.attributes.delete(:active => [process_timestamp])
+          end
+        end
+      end
+    end
+
     # For error reporting usage
     def stilename
       separator = type == 'class' ? '::' : '#'
@@ -82,6 +97,10 @@ module Turnstile
 
     def self.process_timestamp
       "#{Time.now}|#{rand}"
+    end
+    
+    def self.extract_time(process_timestamp)
+      Time.parse(process_timestamp.split('|')[0]) if process_timestamp
     end
 
     def self.table

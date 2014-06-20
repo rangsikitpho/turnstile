@@ -34,6 +34,7 @@ Configuration
     config.aws_secret_access_key = 'AWS secret access key for dynamo'
     config.statsd_host = 'StatsD host'
     config.statsd_port = 'StatsD port'
+    config.ttl = 'Seconds till Turnstiles expire' # Expiration has to happen via the Turnstile::Db.clear_old command
   end
 
 Basic Usage
@@ -47,4 +48,9 @@ Basic Usage
   end
 
   MyClass.new.my_new_method
+
+Other Helpful Commands
+  Turnstile::Db.clear_all # Clears all Turnstiles within Dynamo Db
+  Turnstile::Db.clear_all_active_processes # Clears all Turnstiles for this Project
+  Turnstile::Db.clear_old # Clear all Turnstiles older than configured ttl (useful for stuck Turnstiles)
 
