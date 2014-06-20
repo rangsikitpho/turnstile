@@ -73,7 +73,7 @@ module Turnstile
     def self.clear_old_for_project(project)
       old_process_timestamps = []
       table.items.query(hash_value: project).select do |item|
-        item.attributes.values_at("active")[0].each do |process_timestamp|
+        (item.attributes.values_at("active")[0] || []).each do |process_timestamp|
           if process_timestamp and (Time.now - extract_time(process_timestamp)) > Turnstile.config.ttl
             item.attributes.delete(:active => [process_timestamp])
             clazz, method_name, type = item.attributes.values_at("process")[0].split(".")

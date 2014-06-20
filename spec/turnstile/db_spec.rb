@@ -97,6 +97,13 @@ describe "Turnstile::Db" do
       pdb.add_active_process
       Turnstile::Db.clear_old.first.should == { clazz: clazz, method_name: method_name, type: type, process_timestamp: process_timestamp }
     end
+
+    it "works when no active processes" do
+      pdb = Turnstile::Db.new(clazz,method_name,type)
+      pdb.add_active_process
+      pdb.clear_active_processes
+      Turnstile::Db.clear_old
+    end
   end
 
 end
