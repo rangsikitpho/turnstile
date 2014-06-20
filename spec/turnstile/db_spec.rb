@@ -1,6 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "Turnstile::Db" do
+  let(:clazz) { 'TestClass' }
+  let(:method_name) { 'test_method' }
+  let(:type) { 'instance' }
+
   before(:each) do
     Turnstile.setup do |config|
       config.project = 'My Project'
@@ -14,7 +18,7 @@ describe "Turnstile::Db" do
 
   describe "#add_active_process" do
     it "properly increments active_process_count" do
-      pdb = Turnstile::Db.new('TestClass','test_method','instance')
+      pdb = Turnstile::Db.new(clazz,method_name,type)
       pdb.clear_active_processes
 
       pdb.add_active_process
@@ -24,7 +28,7 @@ describe "Turnstile::Db" do
 
   describe "#delete_active_process" do
     it "properly decrements active_process_count" do
-      pdb = Turnstile::Db.new('TestClass','test_method','instance')
+      pdb = Turnstile::Db.new(clazz,method_name,type)
       pdb.clear_active_processes
 
       process_timestamp = pdb.add_active_process
@@ -35,7 +39,7 @@ describe "Turnstile::Db" do
 
   describe "#clear_active_processes" do
     it "properly decrements active_process_count to 0" do
-      pdb = Turnstile::Db.new('TestClass','test_method','instance')
+      pdb = Turnstile::Db.new(clazz,method_name,type)
 
       pdb.add_active_process
       pdb.add_active_process
@@ -46,7 +50,7 @@ describe "Turnstile::Db" do
 
   describe "#oldest_process_execution_time" do
     it "picks oldest process execution time" do
-      pdb = Turnstile::Db.new('TestClass','test_method','instance')
+      pdb = Turnstile::Db.new(clazz,method_name,type)
 
       process_1_timestamp = pdb.add_active_process
       sleep(2)
@@ -63,14 +67,14 @@ describe "Turnstile::Db" do
 
   describe ".clear_old" do
     it "doesn't clear the turnstile if within ttl range" do
-      pdb = Turnstile::Db.new('TestClass','test_method','instance')
+      pdb = Turnstile::Db.new(clazz,method_name,type)
       pdb.add_active_process
       Turnstile::Db.clear_old
       pdb.active_process_count.should equal 1
     end
 
     it "does clear the turnstile if outside of the ttl range" do
-      pdb = Turnstile::Db.new('TestClass','test_method','instance')
+      pdb = Turnstile::Db.new(clazz,method_name,type)
       Turnstile::Db.stub(:process_timestamp).and_return("#{Time.now - 10}|#{rand}")
       pdb.add_active_process
       Turnstile::Db.clear_old
@@ -78,12 +82,20 @@ describe "Turnstile::Db" do
     end
 
     it "clears and maintains appropriately based on ttl" do
-      pdb = Turnstile::Db.new('TestClass','test_method','instance')
+      pdb = Turnstile::Db.new(clazz,method_name,type)
       pdb.add_active_process
       Turnstile::Db.stub(:process_timestamp).and_return("#{Time.now - 10}|#{rand}")
       pdb.add_active_process
       Turnstile::Db.clear_old
       pdb.active_process_count.should equal 1
+    end
+
+    it "returns the correct process timestamp" do
+      pdb = Turnstile::Db.new(clazz,method_name,type)
+      process_timestamp = "#{Time.now - 10}|#{rand}"
+      Turnstile::Db.stub(:process_timestamp).and_return(process_timestamp)
+      pdb.add_active_process
+      Turnstile::Db.clear_old.first.should == { clazz: clazz, method_name: method_name, type: type, process_timestamp: process_timestamp }
     end
   end
 
